@@ -1,0 +1,21 @@
+variables:
+  - name: PROJECT_PATH
+    value: terraform
+  - name: tfComponent
+    value: cluster
+  - name: tfExecutionDir
+    value: '$(PROJECT_PATH)/src/$(tfComponent)'
+  - name: terraformVersion
+    value: 0.13.06
+  - name: serviceConnectionName
+    value: devops
+  - name: backendAzureRmResourceGroupName
+    value: tfstate
+  - name: backendAzureRmStorageAccountName
+    value: tfstateaz
+  - name: backendAzureRmContainerName
+    value: tfstate
+  - name: backendAzureRmKey
+    value: 'Devterraform.tfstate'
+  - name: tfVarFileName
+    value: "../vars/dev.tfvars"
