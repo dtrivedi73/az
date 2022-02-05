@@ -45,4 +45,4 @@ jobs:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
        # commandOptions: '-var-file=vars/${{ parameters.env }}.tfvars -var acr_server_url=${{ parameters.acr_server_url }} -var acr_username=${{ parameters.acr_username }} -var acr_password=${{ parameters.acr_password }} -var acr_id=${{ parameters.acr_id }} -var azure_client_secret=${{ parameters.azure_client_secret }} -var azure_client_id=${{ parameters.azure_client_id }} -var app_container_tag=${{ parameters.app_image_tag }} -var data_image_tag=${{ parameters.data_image_tag }} -var data_image_name=${{ parameters.data_image_name }} -var spark_cms_image_tag=${{ parameters.cms_image_tag}} -var ssh_key="${{parameters.aks_node_ssh_key }}" -out="out.plan"'
         #environmentServiceNameAzureRM: '${{ parameters.svcConnName }}'
-        environmentServiceNameAzureRM: 'devops'
+        environmentServiceNameAzureRM: 'fe8db9d5-3e7d-41b4-bd16-8df665e5bb09'
