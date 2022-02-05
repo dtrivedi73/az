@@ -26,7 +26,7 @@ stages:
   jobs:
     - template: .ado-templates/tf_plan.yml
       parameters:
-        env: 'dev'
+        #env: 'dev'
         terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
@@ -41,7 +41,7 @@ stages:
   jobs:
     - template: .ado-templates/tf_apply.yml
       parameters:
-        env: 'dev'
+        #env: 'dev'
         terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
