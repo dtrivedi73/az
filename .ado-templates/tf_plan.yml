@@ -1,3 +1,20 @@
+parameters:
+  - name: serviceConnectionName
+    type: string
+  - name: backendAzureRmResourceGroupName
+    type: string
+  - name: backendAzureRmStorageAccountName
+    type: string
+  - name: backendAzureRmContainerName
+    type: string
+  - name: backendAzureRmKey
+    type: string
+  - name: tfComponent
+    type: string
+  - name: tfExecutionDir
+    type: string
+  - name: tfVarFileName
+    type: string
 steps:
   - task: Cache@2
     displayName: 'Register TF cache'
