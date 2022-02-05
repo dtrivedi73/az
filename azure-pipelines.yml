@@ -67,7 +67,7 @@ stages:
     - template: .ado-templates/tf_plan.yml
       parameters:
         env: 'test'
-      terraformVersion: $(terraform_version)
+        terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
         storageAccountName: 'tfstateaz'
