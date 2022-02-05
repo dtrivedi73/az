@@ -11,7 +11,7 @@ pr:
 
 variables:
 - name: terraform_version
-  value: '0.13.3'
+  value: '0.13.6'
 
 pool:
   vmImage: 'ubuntu-18.04'
