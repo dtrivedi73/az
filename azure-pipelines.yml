@@ -1,53 +1,90 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
-
-pr:
-- main
-
-variables:
-- name: terraform_version
-  value: '0.13.6'
-
-
+  - none
 
 pool:
-  vmImage: 'ubuntu-18.04'
-
-################## DEV ##################
+  vmImage: 'ubuntu-latest'
 stages:
-
-- stage: 'terraform_plan_dev_stage'
-  displayName: 'dev - Terraform Plan'
-  jobs:
-    - template: .ado-templates/tf_plan.yml
-      parameters:
-        #env: 'dev'
-        terraformVersion: $(terraform_version)
-        svcConnName: 'devops'
-        resourceGroupName: 'tfstate'
-        storageAccountName: 'tfstateaz'
-        containerName: 'tfstate'
-        tfstateKey: 'terraform.tfstate'
-        
-
-- stage: 'terraform_apply_dev_stage'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-  displayName: 'dev - Terraform Apply'
-  jobs:
-    - template: .ado-templates/tf_apply.yml
-      parameters:
-        #env: 'dev'
-        terraformVersion: $(terraform_version)
-        svcConnName: 'devops'
-        resourceGroupName: 'tfstate'
-        storageAccountName: 'tfstateaz'
-        containerName: 'tfstate'
-        tfstateKey: 'terraform.tfstate'
-        
-
-
+- stage: DevPlan
+    displayName: Dev Plan
+    jobs:
+      - job:
+        displayName: Terraform Plan - Dev Environment
+        variables:
+          - template: vars/dev_vars.yml
+        steps:
+          - template: templates/terraform_plan.yml
+            parameters:
+              serviceConnectionName: devops
+              backendAzureRmResourceGroupName: $(rgName)
+              backendAzureRmStorageAccountName: $(storageAccountName)
+              backendAzureRmContainerName: $(backendAzureRmContainerName)
+              backendAzureRmKey: $(tfState)
+              tfComponent: $(tfComponent)
+              tfExecutionDir: $(tfExecutionDir)
+              tfVarFileName: $(tfVarFileName)
+  - stage: DevApply
+    displayName: Dev Apply
+    jobs:
+      - deployment: Deploy
+        displayName: Terraform Apply - Dev Environment
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: dev
+        variables:
+          - template: vars/dev_vars.yml
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: templates/terraform_apply.yml
+                  parameters:
+                    serviceConnectionName: devops
+                    backendAzureRmResourceGroupName: $(rgName)
+                    backendAzureRmStorageAccountName: $(storageAccountName)
+                    backendAzureRmContainerName: $(backendAzureRmContainerName)
+                    backendAzureRmKey: $(tfState)
+                    tfComponent: $(tfComponent)
+                    tfExecutionDir: $(tfExecutionDir)
+                    tfVarFileName: $(tfVarFileName)
+  - stage: StagingPlan
+      displayName: Staging Plan
+      jobs:
+        - job:
+          displayName: Terraform Plan - Staging Environment
+          variables:
+            - template: vars/staging_vars.yml
+          steps:
+            - template: templates/terraform_plan.yml
+              parameters:
+                serviceConnectionName: devops
+                backendAzureRmResourceGroupName: $(rgName)
+                backendAzureRmStorageAccountName: $(storageAccountName)
+                backendAzureRmContainerName: $(backendAzureRmContainerName)
+                backendAzureRmKey: $(tfState)
+                tfComponent: $(tfComponent)
+                tfExecutionDir: $(tfExecutionDir)
+                tfVarFileName: $(tfVarFileName)
+    - stage: StagingApply
+      displayName: Staging Apply
+      jobs:
+        - deployment: Deploy
+          displayName: Terraform Apply - Staging Environment
+          pool:
+            vmImage: 'ubuntu-latest'
+          environment: staging
+          variables:
+            - template: vars/staging_vars.yml
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - template: templates/terraform_apply.yml
+                    parameters:
+                      serviceConnectionName: devops
+                      backendAzureRmResourceGroupName: $(rgName)
+                      backendAzureRmStorageAccountName: $(storageAccountName)
+                      backendAzureRmContainerName: $(backendAzureRmContainerName)
+                      backendAzureRmKey: $(tfState)
+                      tfComponent: $(tfComponent)
+                      tfExecutionDir: $(tfExecutionDir)
+                      tfVarFileName: $(tfVarFileName)
