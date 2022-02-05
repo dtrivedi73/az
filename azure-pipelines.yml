@@ -11,7 +11,7 @@ pr:
 
 variables:
 - name: terraform_version
-  value: 0.14 
+  value: '0.13.3'
 
 pool:
   vmImage: 'ubuntu-18.04'
@@ -25,7 +25,7 @@ stages:
     - template: .ado-templates/tf_plan.yml
       parameters:
         env: 'dev'
-       # terraformVersion: $(terraform_version)
+        terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
         storageAccountName: 'tfstateaz'
@@ -40,7 +40,7 @@ stages:
     - template: .ado-templates/tf_apply.yml
       parameters:
         env: 'dev'
-      #  terraformVersion: $(terraform_version)
+        terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
         storageAccountName: 'tfstateaz'
@@ -67,7 +67,7 @@ stages:
     - template: .ado-templates/tf_plan.yml
       parameters:
         env: 'test'
-      #  terraformVersion: $(terraform_version)
+      terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
         storageAccountName: 'tfstateaz'
@@ -82,7 +82,7 @@ stages:
     - template: .ado-templates/tf_apply.yml
       parameters:
         env: 'test'
-    #    terraformVersion: $(terraform_version)
+        terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
         storageAccountName: 'tfstateaz'
@@ -96,7 +96,7 @@ stages:
     - template: .ado-templates/tf_plan.yml
       parameters:
         env: 'prod'
-     #   terraformVersion: $(terraform_version)
+        terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
         storageAccountName: 'tfstateaz'
@@ -111,7 +111,7 @@ stages:
     - template: .ado-templates/tf_apply.yml
       parameters:
         env: 'prod'
-      #  terraformVersion: $(terraform_version)
+        terraformVersion: $(terraform_version)
         svcConnName: 'devops'
         resourceGroupName: 'tfstate'
         storageAccountName: 'tfstateaz'
