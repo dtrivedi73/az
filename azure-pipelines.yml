@@ -12,15 +12,7 @@ pr:
 variables:
 - name: terraform_version
   value: '0.13.6'
-parameters:
-- name: enviornment
-  displayName: Environment to deploy
-  type: string
-  default: ../vars/dev.tfvars
-  values:
-  - "../vars/dev.tfvars"
-  - "../vars/prod.tfvars"
-  - "../vars/test.tfvars"
+
 
 
 pool:
@@ -58,15 +50,4 @@ stages:
         tfstateKey: 'terraform.tfstate'
         
 
-# - stage: 'aks_testing_dev'
-#   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-#   displayName: 'dev - AKS Testing'
-#   jobs:
-#     - template: .ado-templates/aks_test.yml
-#       parameters:
-#         env: 'dev'
-#         svcConnName: 'devops'
-#         resourceGroupName: 'tfstate'
-#         clusterName: 'dev-spark-aks-cluster'
-#         azureSubscription: '1d205dfb-df2e-48c6-9b85-a9301092d705'
 
