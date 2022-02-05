@@ -1,0 +1,118 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pr:
+- main
+
+
+
+pool:
+  vmImage: 'ubuntu-18.04'
+
+################## DEV ##################
+stages:
+
+- stage: 'terraform_plan_dev_stage'
+  displayName: 'dev - Terraform Plan'
+  jobs:
+    - template: .ado-templates/tf_plan.yml
+      parameters:
+        env: 'dev'
+        terraformVersion: $(terraform_version)
+        svcConnName: 'devops'
+        resourceGroupName: 'tfstate'
+        storageAccountName: 'tfstateaz'
+        containerName: 'tfstate'
+        tfstateKey: 'terraform.tfstate'
+        
+
+- stage: 'terraform_apply_dev_stage'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: 'dev - Terraform Apply'
+  jobs:
+    - template: .ado-templates/tf_apply.yml
+      parameters:
+        env: 'dev'
+        terraformVersion: $(terraform_version)
+        svcConnName: 'devops'
+        resourceGroupName: 'tfstate'
+        storageAccountName: 'tfstateaz'
+        containerName: 'tfstate'
+        tfstateKey: 'terraform.tfstate'
+        
+
+# - stage: 'aks_testing_dev'
+#   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+#   displayName: 'dev - AKS Testing'
+#   jobs:
+#     - template: .ado-templates/aks_test.yml
+#       parameters:
+#         env: 'dev'
+#         svcConnName: 'devops'
+#         resourceGroupName: 'tfstate'
+#         clusterName: 'dev-spark-aks-cluster'
+#         azureSubscription: '1d205dfb-df2e-48c6-9b85-a9301092d705'
+
+################## TEST ##################
+- stage: 'terraform_plan_test_stage'
+  displayName: 'test - Terraform Plan'
+  jobs:
+    - template: .ado-templates/tf_plan.yml
+      parameters:
+        env: 'test'
+        terraformVersion: $(terraform_version)
+        svcConnName: 'devops'
+        resourceGroupName: 'tfstate'
+        storageAccountName: 'tfstateaz'
+        containerName: 'tfstate'
+        tfStateKey: 'terraform.tfstate'
+        
+
+- stage: 'terraform_apply_test_stage'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: 'test - Terraform Apply'
+  jobs:
+    - template: .ado-templates/tf_apply.yml
+      parameters:
+        env: 'test'
+        terraformVersion: $(terraform_version)
+        svcConnName: 'devops'
+        resourceGroupName: 'tfstate'
+        storageAccountName: 'tfstateaz'
+        containerName: 'tfstate'
+        tfStateKey: 'terraform.tfstate'
+        
+################## PRODUCTION ##################
+- stage: 'terraform_plan_prod_stage'
+  displayName: 'prod - Terraform Plan'
+  jobs:
+    - template: .ado-templates/tf_plan.yml
+      parameters:
+        env: 'prod'
+        terraformVersion: $(terraform_version)
+        svcConnName: 'devops'
+        resourceGroupName: 'tfstate'
+        storageAccountName: 'tfstateaz'
+        containerName: 'tfstate'
+        tfStateKey: 'terraform.tfstate'
+        
+
+- stage: 'terraform_apply_prod_stage'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: 'prod - Terraform Apply'
+  jobs:
+    - template: .ado-templates/tf_apply.yml
+      parameters:
+        env: 'prod'
+        terraformVersion: $(terraform_version)
+        svcConnName: 'devops'
+        resourceGroupName: 'tfstate'
+        storageAccountName: 'tfstateaz'
+        containerName: 'tfstate'
+        tfStateKey: 'terraform.tfstate'
+        

@@ -1,0 +1,56 @@
+parameters:
+  env: 'NOT_DEFINED'
+  terraformVersion: 'NOT_DEFINED'
+  svcConnName: 'NOT_DEFINED'
+  resourceGroupName: 'NOT_DEFINED'
+  storageAccountName: 'NOT_DEFINED'
+  containerName: 'NOT_DEFINED'
+  tfstateKey: 'NOT_DEFINED'
+  
+  
+
+jobs:
+  - deployment: 'terraform_apply'
+    displayName: "${{ parameters.env }} - Terraform Apply"
+    environment: '${{ parameters.env }}'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self 
+          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+            displayName: "Use Terraform Version ${{ parameters.terraformVersion }}"
+            inputs:
+              terraformVersion: '${{ parameters.terraformVersion }}'
+
+          - task: TerraformTaskV1@0
+            displayName: "Terraform Init"
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              #commandOptions: '-var-file=vars/${{ parameters.env }}.tfvars -var acr_server_url=${{ parameters.acr_server_url }} -var acr_username=${{ parameters.acr_username }} -var acr_password=${{ parameters.acr_password }} -var acr_id=${{ parameters.acr_id }} -var azure_client_secret=${{ parameters.azure_client_secret }} -var azure_client_id=${{ parameters.azure_client_id }} -var app_container_tag=${{ parameters.app_image_tag }} -var ssh_key=${{parameters.aks_node_ssh_key }}'
+              commandOptions: ''
+              backendServiceArm: '${{ parameters.svcConnName }}'
+              backendAzureRmResourceGroupName: '${{ parameters.resourceGroupName }}'
+              backendAzureRmStorageAccountName: '${{ parameters.storageAccountName }}'
+              backendAzureRmContainerName: '${{ parameters.containerName }}'
+              backendAzureRmKey: '${{ parameters.tfstateKey }}'
+
+          - task: TerraformTaskV1@0
+            displayName: "Terraform Plan"
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              commandOptions: '-var-file=vars/${{ parameters.env }}.tfvars -var acr_server_url=${{ parameters.acr_server_url }} -var acr_username=${{ parameters.acr_username }} -var acr_password=${{ parameters.acr_password }} -var acr_id=${{ parameters.acr_id }} -var azure_client_secret=${{ parameters.azure_client_secret }} -var azure_client_id=${{ parameters.azure_client_id }} -var app_container_tag=${{ parameters.app_image_tag }} -var data_image_tag=${{ parameters.data_image_tag }} -var data_image_name=${{ parameters.data_image_name }} -var spark_cms_image_tag=${{ parameters.cms_image_tag}} -var ssh_key="${{parameters.aks_node_ssh_key}}" -out="out.plan"'
+              environmentServiceNameAzureRM: '${{ parameters.svcConnName }}'
+
+          - task: TerraformTaskV1@0
+            displayName: "Terraform Apply"
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
+              commandOptions: 'out.plan'
+              environmentServiceNameAzureRM: '${{ parameters.svcConnName }}'

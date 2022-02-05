@@ -1,0 +1,34 @@
+# parameters:
+#   env: 'NOT_DEFINED'
+#   svcConnName: 'NOT_DEFINED'
+#   resourceGroupName: 'NOT_DEFINED'
+#   clusterName: 'NOT_DEFINED'
+#   azureSubscription: 'NOT_DEFINED'
+# 
+# jobs:
+#   - job: 'aks_testing'
+#     displayName: "${{ parameters.env }} - AKS Testing"
+# 
+#     steps:
+#     - task: AzureCLI@2
+#       displayName: "az login"
+#       inputs:
+#         azureSubscription: '${{parameters.svcConnName}}'
+#         scriptType: pscore
+#         scriptLocation: inlineScript
+#         inlineScript: |
+#           az account set --subscription "${{ parameters.azureSubscription }}"
+#           az aks get-credentials --name "${{ parameters.clusterName }}" --overwrite-existing --resource-group "${{ parameters.resourceGroupName }}" 
+# 
+# 
+#     - task: Kubernetes@1
+#       displayName: "get nodes"
+#       inputs:
+#         connectionType: 'Azure Resource Manager'
+#         azureSubscriptionEndpoint: '${{parameters.svcConnName}}'
+#         azureResourceGroup: '${{ parameters.resourceGroupName }}'
+#         kubernetesCluster: '${{ parameters.clusterName }}'
+#         command: 'get'
+#         secretType: 'dockerRegistry'
+#         containerRegistryType: 'Azure Container Registry'
+#         arguments: 'nodes'
