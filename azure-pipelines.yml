@@ -12,6 +12,16 @@ pr:
 variables:
 - name: terraform_version
   value: '0.13.6'
+parameters:
+- name: enviornment
+  displayName: Environment to deploy
+  type: string
+  default: ../vars/dev.tfvars
+  values:
+  - "../vars/dev.tfvars"
+  - "../vars/prod.tfvars"
+  - "../vars/test.tfvars"
+
 
 pool:
   vmImage: 'ubuntu-18.04'
