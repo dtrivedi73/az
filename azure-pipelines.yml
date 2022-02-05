@@ -9,7 +9,9 @@ trigger:
 pr:
 - main
 
-
+variables:
+- name: terraform_version
+  value: 0.14 
 
 pool:
   vmImage: 'ubuntu-18.04'
